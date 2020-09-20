@@ -6,8 +6,8 @@ This project is mainly talk able how to use UEFI or BIOS firmware to boot linux 
 These are mainly two different methods to boot Linux.
 
 **Thanks to**
-+ (http://www.gnu.org/software/grub/index.html)[grub2 Boot Loader]
-+ (https://www.ventoy.net/en/index.html)[Ventoy Boot Loader]
-+ (https://www.tuxera.com/company/open-source/)[ntfs-3g disk program]
-+ (https://www.kernel.org/)[Linux kernel]
-+ (http://bbs.wuyou.net/home.php?mod=space&uid=434443)[niumao from wuyou BBS]
++ [grub2 Boot Loader](http://www.gnu.org/software/grub/index.html)
++ [Ventoy Boot Loader](https://www.ventoy.net/en/index.html)
++ [ntfs-3g disk program](https://www.tuxera.com/company/open-source/)
++ [Linux kernel](https://www.kernel.org/)
++ [niumao from wuyou BBS](http://bbs.wuyou.net/home.php?mod=space&uid=434443)
