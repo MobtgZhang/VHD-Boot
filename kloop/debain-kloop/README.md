@@ -103,7 +103,7 @@ menuentry 'Deepin V20 Beta VHD '  --class deepin  {
 	insmod ntfs
 	insmod probe
 	insmod search
-    set vhdfile="/ubuntu/deepin.vhd"
+    	set vhdfile="/ubuntu/deepin.vhd"
 	search --no-floppy -f --set=aabbcc $vhdfile 
 	set root=${aabbcc}
 	probe -u --set=ddeeff ${aabbcc}
