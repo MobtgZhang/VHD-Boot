@@ -71,3 +71,5 @@ The details of the menu can be found in the project.
 + Fixed VHD without LVM files: `kloop=<path of VHD file>,kroot=/dev/mapper/loop0pX`,don't set klvm.You can also use the type such as `kroot=/dev/dm-1`,`kroot=/dev/dm-3`.
 + LVM on hard disk: `root=<partition on hard disk>,kroot=/dev/mapper/XXX-XXX kloop=1 klvm=<volume group name>`
 
+## Thanks to
+[1] [2011niumao](http://bbs.c3.wuyou.net/home.php?mod=space&uid=434443)
