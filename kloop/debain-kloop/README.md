@@ -25,7 +25,7 @@ Use `apt-cache search ntfs-3g` we can find some of ntfs-3g tools.But here we fix
 make
 sudo make install
 ```
-**Note: ** You need to install `gcc,g++ build-essential make` and other software in advance:
+**Note:** You need to install `gcc,g++ build-essential make` and other software in advance:
 ```bash
 sudo apt install gcc,g++ build-essential make
 ```
