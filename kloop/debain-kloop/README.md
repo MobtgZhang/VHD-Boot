@@ -1,5 +1,5 @@
 # Debain Kloop
-This tutorial is applicable to any Linux operating system based on Debian Linux,I'm using deepinV20Beta system for example.
+This tutorial is applicable to any Linux operating system based on Debian Linux,I'm using [deepin V20 Beta](https://www.deepin.org/zh/) system for example.
 ## 1.Create a fixed size VHD virtual hard disk
 Under Windows operating system,you can use diskpart management tool to create fixed size virtual disk files.Note that you need to use fixed-size virtual disk files instead of a dynamically allocated one to install VHD Linux. Here is an example of creating a VHD file:
 ```bat
