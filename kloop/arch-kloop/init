@@ -1,0 +1,210 @@
+#!/usr/bin/ash
+
+udevd_running=0
+mount_handler=default_mount_handler
+init=/sbin/init
+rd_logmask=0
+
+. /init_functions
+
+mount_setup
+
+# parse the kernel command line
+parse_cmdline </proc/cmdline
+
+# setup logging as early as possible
+rdlogger_start
+
+for d in ${disablehooks//,/ }; do
+    [ -e "/hooks/$d" ] && chmod 644 "/hooks/$d"
+done
+
+. /config
+
+run_hookfunctions 'run_earlyhook' 'early hook' $EARLYHOOKS
+
+if [ -n "$earlymodules$MODULES" ]; then
+    modprobe -qab ${earlymodules//,/ } $MODULES
+fi
+
+run_hookfunctions 'run_hook' 'hook' $HOOKS
+
+# honor the old behavior of break=y as a synonym for break=premount
+if [ "${break}" = "y" ] || [ "${break}" = "premount" ]; then
+    echo ":: Pre-mount break requested, type 'exit' to resume operation"
+    launch_interactive_shell
+fi
+
+rootdev=$(resolve_device "$root") && root=$rootdev
+unset rootdev
+if [ -z "$kloop" ] && [ -z "$squashfs" ]; then
+	fsck_root
+
+	# Mount root at /new_root
+	"$mount_handler" /new_root
+fi
+#####################################################################
+    #               BOOT FROM VHD, KLOOP by niumao              #                  
+    #####################################################################                      
+
+if [ -n "$upperdir" ] && [ -n "$workdir" ];  then
+
+	### reset the value of the root variable 
+    HOSTDEV="${root#block:}"
+    NEWROOT="/new_root"
+	
+	###  auto probe the fs-type of the partition in which dir-root live and mount it  /host 
+	mkdir -p /host
+	if [ -e $NEWROOT$upperdir ]; then
+		mount --move  $NEWROOT  /host
+	else
+		if [ -z "$hostfstype" ]; then
+			hostfstype="$(blkid -s TYPE -o value "${HOSTDEV}")"
+			[ -z "$hostfstype"  -o "${hostfstype}" = "ntfs" ] && hostfstype="ntfs-3g"
+		fi
+		[ "${hostfstype}" = "ntfs-3g" ] || modprobe ${hostfstype}
+		mount -t ${hostfstype} -o rw  ${HOSTDEV}  /host
+	fi
+	
+	###try to boot from dir-root
+	modprobe overlay
+	if [ -z "$lowerdir" ]; then
+	mkdir  /run/lowerdir 
+	lowerdir="/run/lowerdir" 
+	fi	
+	mount  -t overlay overlay -o lowerdir=$lowerdir,upperdir=/host$upperdir,workdir=/host$workdir $NEWROOT
+
+	### mount /host in initrd to /host of the realrootfs
+	if [  "${hosthidden}" != "y" ] ; then
+		[ -d "${NEWROOT}"/host ] || mkdir -p ${NEWROOT}/host 
+		mount --move /host   ${NEWROOT}/host
+	fi
+fi	
+
+if [ -n "$squashfs" ]; then
+
+    ### reset the value of the root variable 
+    HOSTDEV="${root#block:}"
+    NEWROOT="/new_root"
+ 
+	###  auto probe the fs-type of the partition in which sfs-file live and mount it  /host 
+	mkdir -p /host
+	if [ -e $NEWROOT$squashfs ]; then
+		mount --move  $NEWROOT  /host
+	else
+		if [ -z "$hostfstype" ]; then
+			hostfstype="$(blkid -s TYPE -o value "${HOSTDEV}")"
+			[ -z "$hostfstype"  -o "${hostfstype}" = "ntfs" ] && hostfstype="ntfs-3g"
+		fi
+		[ "${hostfstype}" = "ntfs-3g" ] || modprobe ${hostfstype}
+		mount -t ${hostfstype} -o rw  ${HOSTDEV}  /host
+	fi
+	###try to boot from squashfs
+	mkdir /run/tmpwriteroot /run/tmpreadroot /run/tmpworkdir
+    mount /host$squashfs /run/tmpreadroot
+	mount -t overlay overlay -o lowerdir=/run/tmpreadroot,upperdir=/run/tmpwriteroot,workdir=/run/tmpworkdir $NEWROOT
+
+    ### mount /host in initrd to /host of the realrootfs
+    if [  "${hosthidden}" != "y" ] ; then
+        [ -d "${NEWROOT}"/host ] || mkdir -p ${NEWROOT}/host 
+        mount --move /host   ${NEWROOT}/host
+    fi
+fi
+
+
+if [ -n "$kloop" ]; then
+
+    ### reset the value of the root variable 
+    HOSTDEV="${root#block:}"
+    NEWROOT="/new_root"
+    [ -n "$kroot" ] && root="$kroot"
+    [ -n "$kroot" ] || root="/dev/loop0"
+    export root
+    realroot="$root"
+
+	###  auto probe the fs-type of the partition in which vhd-file live and mount it  /host 
+	mkdir -p /host
+	if [ -e $NEWROOT$kloop ]; then
+		mount --move  $NEWROOT  /host
+	else
+		if [ -z "$hostfstype" ]; then
+			hostfstype="$(blkid -s TYPE -o value "${HOSTDEV}")"
+			[ -z "$hostfstype"  -o "${hostfstype}" = "ntfs" ] && hostfstype="ntfs-3g"
+		fi
+		[ "${hostfstype}" = "ntfs-3g" ] || modprobe ${hostfstype}
+		mount -t ${hostfstype} -o rw  ${HOSTDEV}  /host
+	fi
+	
+    ### mount the vhd-file on a loop-device 
+    if [ "${kloop#/}" !=  "${kloop}" ]; then       	
+        modprobe  loop  
+        partx -av "/host${kloop}" 
+        [ -e "$realroot" ] ||  sleep 3
+    fi
+
+    ### probe lvm on vhd-file
+    if [ -n "$klvm" ];  then
+        modprobe dm-mod
+        vgscan
+        vgchange  -ay  $klvm
+        [ -e "$realroot" ] ||  sleep 3
+    fi 
+	 
+    ### mount the realroot / in vhd-file on $NEWROOT 
+    if [ -z "${kloopfstype}" ]; then
+        kloopfstype="$(blkid -s TYPE -o value "$realroot")"
+        [ -z "${kloopfstype}" ] && kloopfstype="ext4"
+    fi
+    [ -e "$realroot" ] ||  sleep 3
+    mount -t "${kloopfstype}" -o rw $realroot $NEWROOT
+	
+    ### mount /host in initrd to /host of the realrootfs
+    if [  "${hosthidden}" != "y" ] ; then
+        [ -d "${NEWROOT}"/host ] || mkdir -p ${NEWROOT}/host 
+        mount --move /host   ${NEWROOT}/host
+    fi
+
+fi
+
+    ######################################################################
+	#            end, BOOT FROM VHD, KLOOP by niumao             #
+    #####################################################################
+
+
+
+
+
+
+run_hookfunctions 'run_latehook' 'late hook' $LATEHOOKS
+run_hookfunctions 'run_cleanuphook' 'cleanup hook' $CLEANUPHOOKS
+
+if [ "$(stat -c %D /)" = "$(stat -c %D /new_root)" ]; then
+    # Nothing got mounted on /new_root. This is the end, we don't know what to do anymore
+    # We fall back into a shell, but the shell has now PID 1
+    # This way, manual recovery is still possible.
+    err "Failed to mount the real root device."
+    echo "Bailing out, you are on your own. Good luck."
+    echo
+    launch_interactive_shell --exec
+elif [ ! -x "/new_root${init}" ]; then
+    # Successfully mounted /new_root, but ${init} is missing
+    # The same logic as above applies
+    err "Root device mounted successfully, but ${init} does not exist."
+    echo "Bailing out, you are on your own. Good luck."
+    echo
+    launch_interactive_shell --exec
+fi
+
+if [ "${break}" = "postmount" ]; then
+    echo ":: Post-mount break requested, type 'exit' to resume operation"
+    launch_interactive_shell
+fi
+
+# this should always be the last thing we do before the switch_root.
+rdlogger_stop
+
+exec env -i \
+    "TERM=$TERM" \
+    /usr/bin/switch_root /new_root $init "$@"
+
+# vim: set ft=sh ts=4 sw=4 et:
