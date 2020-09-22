@@ -133,3 +133,40 @@ menuentry 'Elementary OS 5.1 VHD'  --class elementary  {
 ```
 ## 7. Use the kernel to boot other systems
 If you have a LINUX system installed using a fixed-size VHD, use the same version of the kernel module directory on the LINUX system as the `initrd. Img-xxxxxx-generic` that you made to boot VHD.For example, `/lib/modules/4.15.0-118-generic` copy to the `/lib/modules/` directory in the VHD system with permissions set to 755.You can use this Linux kernel to boot into the VHD system,otherwise it can't boot correctly or missing some of modules. It booted successfully on `Fedora Mageia OpensUse ArchLinux` and many other systems.
+**Note:** You should change the root directory access in file A. If you do not, you may not be able to load the kernel and start the operating system because of access issues. So modifty it in the VHD file:
+```bash
+sudo nano /etc/fstab
+```
+The `/etc/fstab` file contains the following fields,separated by spaces or tabs:
+```bash
+<file system>	<dir>	<type>	<options>	<dump>	<pass>
+```
++ **`<file system>`** The partition or storage device to mount.
++ **`<dir>`** Where `<file system>` mount. 
++ **`<type>`** system file tyeps of the devices or the partitions.Linux System supports many different filesystem types to mount devices or partitions: `ext2,ext3, ext4, reiserfs,xfs, jfs, smbfs,iso9660, vfat, ntfs,swap` and `auto`.If you set to `auto`, the mount command guesses the type of file system being used, which is useful for mobile devices like CDROM and DVD.
++ **`<options>`** Parameters used during mount. Note that some mount parameters are specific to a particular file system.Some commonly used parameters are:
+  + `auto` Mount automatically at startup or when you type the `mount -a` command.
+  + `noauto` Only mounted under your command.
+  + `exec` Allows binary files for this partition to be executed.
+  + `noexec` Binaries on this file system are not allowed to be executed.
+  + `ro` Mounts the file system in read-only mode.
+  + `rw` Mounts the file system in read - write mode.
+  + `users` Allows any user to mount this file system. If there is no definition displayed, `noexec, nosuid, nodev` parameters are implicitly enabled.
+  + `users` Allows users in all Users groups to mount the file system.
+  + `nouser` Only the root user can be mounted.
+  + `owner` Allows the device owner to mount.
+  + `sync` I/O synchronizes.
+  + `async` I/O asynchronous.
+  + `dev` Resolves block special devices on the file system.
+  + `nodev` Does not resolve block special devices on the file system.
+  + `suid` Allows `suid` manipulation and set the `sgid` bit.This parameter is usually used for special tasks that allow the custom user to temporarily raise privileges while running the program.
+  + `nosuid` Disables `suid` manipulation and sets the `sgid` bit.
+  + `noatime` Does not update inode access records on the file system, which improves performance (see the `atime` parameter).
+  + `nodiratime` Does not update directory inode access records on the file system, which improves performance (see the `atime` parameter).
+  + `relatime` Updates the inode Access record in real time.Only access in the record earlier than the current access will be updated(Similar to `notime`, but does not interrupt processes such as `mutt` or other programs that detect whether files have been modified since the last time they were accessed.), which can improve performance (see the `atime` parameter).
+  + `flush` `vfat`  option, flush data more frequently, copy dialog box or progress bar disappear after all data is written.
+  + `default` use default mount parameters for file systems. For example, type of `ext4` default parameters are `rw, suid, dev, exec, auto, nouser, async`.
++ **`<dump>`**  The `dump` tool uses it to determine when to back up. `dump` examines its contents and uses numbers to determine whether or not to back up the file system.The allowed numbers are 0 and 1.0 means ignore, and 1 means backup.Most users don't have dump installed, `<dump>` should set to 0 for them.
++ **`<pass>`** `fsck` read `<pass>` to determine the order in which the file system needs to be checked.The allowed numbers are 0, 1, and 2.The root directory should have the highest priority 1, and all other devices that need to be checked should be set to 2. 0 to indicate that the device will not be checked by `fsck`.
+
+You can set the values following the notations above.You should note that the `init` file also covers a number of file directories and how to read them.
