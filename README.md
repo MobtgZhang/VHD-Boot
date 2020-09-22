@@ -4,8 +4,6 @@ This project is mainly talk able how to use UEFI or BIOS firmware to boot linux 
 2. vloop method
 3. vdfuseloop method
 
-These are mainly two different methods to boot Linux.
-
 **Thanks to**
 + [grub2 Boot Loader](http://www.gnu.org/software/grub/index.html)
 + [Ventoy Boot Loader](https://www.ventoy.net/en/index.html)
