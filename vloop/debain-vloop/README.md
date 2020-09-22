@@ -133,6 +133,11 @@ menuentry 'Elementary OS 5.1 VHD'  --class elementary  {
 ```
 ## 7. Use the kernel to boot other systems
 If you have a LINUX system installed using a fixed-size VHD, use the same version of the kernel module directory on the LINUX system as the `initrd. Img-xxxxxx-generic` that you made to boot VHD.For example, `/lib/modules/4.15.0-118-generic` copy to the `/lib/modules/` directory in the VHD system with permissions set to 755.You can use this Linux kernel to boot into the VHD system,otherwise it can't boot correctly or missing some of modules. It booted successfully on `Fedora Mageia OpensUse ArchLinux` and many other systems.
+
+
+
+
+
 **Note:** You should change the root directory access in file A. If you do not, you may not be able to load the kernel and start the operating system because of access issues. So modifty it in the VHD file:
 ```bash
 sudo nano /etc/fstab
