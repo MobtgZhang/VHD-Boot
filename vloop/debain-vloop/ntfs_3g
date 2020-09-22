@@ -1,0 +1,38 @@
+#!/bin/sh
+
+##set -e
+##case "${1}" in
+##	prereqs)
+##		exit 0
+##		;;
+##esac
+
+if [ "${ROOTFSTYPE}" = ntfs ] || [ "${ROOTFSTYPE}" = ntfs-3g ] || \
+   [ "${LOOPFSTYPE}" = ntfs ] || [ "${LOOPFSTYPE}" = ntfs-3g ]
+then
+	mkdir -p /run/sendsigs.omit.d
+	pidof mount.ntfs >> /run/sendsigs.omit.d/ntfs-3g
+	pidof mount.ntfs-3g >> /run/sendsigs.omit.d/ntfs-3g
+fi
+#####################################################################
+##the following maybe help to resolve the buffer I/O error problem 
+##when reboot or halt.
+#####################################################################
+
+if [ -d /run/initramfs -a -f /init ]
+then
+	mkdir -p /run/initramfs/dev /run/initramfs/host /run/initramfs/proc /run/initramfs/root /run/initramfs/run /run/initramfs/sys /run/initramfs/tmp
+	rm -rf   /lib/modules
+	for xxx in /*
+  	do	
+	if [ ${xxx} = "/dev" -o ${xxx} = "/host" -o ${xxx} = "/proc" -o ${xxx} = "/root" -o ${xxx} = "/run" -o ${xxx} = "/sys" -o ${xxx} = "/tmp" ];
+	then
+		:
+	else
+		cp -a ${xxx} /run/initramfs/  1>/dev/null 2>&1;
+	fi
+	done
+	unset xxx
+fi
+####################################################################
+exit 0
