@@ -1,3 +1,6 @@
+#! /bin/bash
+# This script is for dracut, and boot from kloop or vloop method
+
 KLOOP=$(getarg kloop=)
 KROOT=$(getarg kroot=)
 KLOOPFSTYPE=$(getarg kloopfstype=)
