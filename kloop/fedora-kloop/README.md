@@ -5,7 +5,7 @@ First of all,create a fixed-size VHD file using virtualbox,and install fedora li
 ## 2. Install some of useful tools
 At first,we should install `kpartx,util-linux,dm-setup,lvm2`.In the terminal of the virtualbox running system,we type the following command:
 ```bash
-sudo yum install kpartx util-linux dmsetup lvm2
+sudo yum install kpartx util-linux device-mapper lvm2
 ```
 or use `dnf` command to installl the software.
 ## 3. Compile and install ntfs-3g
