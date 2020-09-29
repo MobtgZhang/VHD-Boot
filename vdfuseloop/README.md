@@ -81,6 +81,6 @@ Where the parameter `host` refers to the partition device file path of the physi
 ## `initramfs-tool` solutions
 
 **Thanks to**
-[2011niumao](http://wuyou.net/home.php?mod=space&uid=434443)
-[Misty](http://wuyou.net/home.php?mod=space&uid=412891)
-[Deploy Linux into, and boot from, VHD](https://unix.stackexchange.com/questions/309900/deploy-linux-into-and-boot-from-vhd/465215#465215)
++ [2011niumao](http://wuyou.net/home.php?mod=space&uid=434443)
++ [Misty](http://wuyou.net/home.php?mod=space&uid=412891)
++ [Deploy Linux into, and boot from, VHD](https://unix.stackexchange.com/questions/309900/deploy-linux-into-and-boot-from-vhd/465215#465215)
