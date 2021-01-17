@@ -3,7 +3,7 @@ This tutorial is applicable to any Linux operating system based on Debian Linux,
 ## 1. Install ArchLinx on VHD file
 You can install it on a fixed VHD file,or a non-partitioned img file,or a fixed with LVM VHD file,or an LVM on a real hard disk partition.
 It is recommanded to install system with free software VirtualBox.Installation is omitted.
-## 3. Install some softwares
+## 2. Install some softwares
 At first,we should install `kpartx,kpartx-boot,util-linux,dm-setup,lvm2`.In the terminal of the virtualbox running system,we type the following command:
 ```bash
 sudo pacman -S multipath-tools lvm2 device-mapper util-linux
