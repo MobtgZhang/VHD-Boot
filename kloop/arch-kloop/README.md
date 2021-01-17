@@ -3,7 +3,13 @@ This tutorial is applicable to any Linux operating system based on Debian Linux,
 ## 1. Install ArchLinx on VHD file
 You can install it on a fixed VHD file,or a non-partitioned img file,or a fixed with LVM VHD file,or an LVM on a real hard disk partition.
 It is recommanded to install system with free software VirtualBox.Installation is omitted.
-## 2.Install fixed ntfs-3g
+## 3. Install some softwares
+At first,we should install `kpartx,kpartx-boot,util-linux,dm-setup,lvm2`.In the terminal of the virtualbox running system,we type the following command:
+```bash
+sudo pacman -S multipath-tools lvm2 device-mapper util-linux
+```
+
+## 3.Install fixed ntfs-3g
 Download modified ntfs-3g source file, and then go to the directory ,execute the following command:
 ```bash
 ./configure
@@ -11,13 +17,13 @@ make
 sudo make install
 ```
 **Note** The purpose of dong this process aims to remove shutdown errors by systemd, konwn as buffer I/O errors.The method comes from the website [RootStorageDaemons](http://www.freedesktop.org/wiki/Software/systemd/RootStorageDaemons/).
-## 3.Modify some system files
+## 4.Modify some system files
 Two of the system files need to modify as follows:
 ```bash
 /etc/mkinitcpio.conf
 /usr/lib/initcpio/init 
 ```
-### 3.1 Modifty `mkinitcpio` configuration file
+### 4.1 Modifty `mkinitcpio` configuration file
 Backup the file, and then modify the file with `nano` editor, etc.
 ```bash
 sudo cp /etc/mkinitcpio.conf /etc/mkinitcpio.conf.back
@@ -36,7 +42,7 @@ Some of software is recommanded when generate kernel.You should install the foll
 sudo pacman -S multipath-tools util-linux lvm2 mdadm
 ```
 `multipath-tools` including `kpartx`tools.In some old edtions of archlinux,`mdadm_udev` should change to `mdadm`.
-### 3.2 Modifty `init` file
+### 4.2 Modifty `init` file
 Backup the file, and then modify the file with `nano` editor, etc.
 ```bash
 sudo cp /usr/lib/initcpio/init  /usr/lib/initcpio/init.back
@@ -85,14 +91,14 @@ After that , add the code enclosed in the following comments in the attachment t
 	#            end, BOOT FROM VHD, KLOOP by niumao             #
 	##############################################################
 ```
-## 4.Remake `initramfs` file.
+## 5.Remake `initramfs` file.
 Using the following command to generate the kernel:
 ```bash
 sudo mkinitcpio -k $(uname -r) -g ~/initramfs-linux.img-$(uname -r)
 ```
 The parameter `-k` represents the corresponding kernel version,and the `-g` represents the file name with the path for the generated `initramfs` file.The kernel version can be seen by looking up the folder name under `/lib/modules/`.
 Copy the kernel into the root file in VHD file, you can also copy to other partition in the hard disk to boot the VHD.I copied the genrated kernel file `initramfs-linux.img` and `/boot/vmlinuz-linux` into the root directory in VHD file.
-## 5. Boot menu settings
+## 6. Boot menu settings
 These two menu options can be used to automatically detect `UUID`.All you need to do is configure `GRUB4DOS` or `GRUB2` so that you can boot to either `GRUb4DOS` or `GRUB2`.
 
 Some examples to boot VHD:
@@ -123,7 +129,7 @@ menuentry 'ArchLinux' --class arch{
 	initrd	(lp0,1)/initramfs-linux.img
 }
 ```
-## 6. `kloop` boot parameter settings for other cases
+## 7. `kloop` boot parameter settings for other cases
 + `img` file without partition table:`kloop=<img file path>` and other parameters are not set or `kroot=/dev/loop0`
 + fixed VHD file with LVM: `root=<the partition where VHD file partition located in>`,`kloop=<the VHD file with path name>`,`kroot=/dev/mapper/<vgn-lvn name>`,`klvm=<volume name>`.
 + LVM on the real partition: `root=<the partition where LVM located in>`,`kloop=1`,`klvm` and `kroot`are the same as above.
