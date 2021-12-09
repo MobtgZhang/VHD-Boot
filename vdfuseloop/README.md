@@ -47,6 +47,7 @@ sudo cp -r 90vdfuseloop /usr/lib/dracut/modules.d/
 sudo dracut ~/initrd.img-$(uname -r) --force
 ```
 Using `--force` to overwrite the kernel file if it exists.
+
 5. Copy two files: `initrd.img-$(uname -r)` and `vmlinuz-$(uname -r)` to boot the system.
 6. Configure the grub
 
