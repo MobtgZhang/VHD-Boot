@@ -12,7 +12,7 @@ The fixed-size vhd is actually no different from the raw format used in [WUBI](h
 
 `vdfuse` uses the kernel module of the open source project `virtualbox` to read and write to the `virtualbox` supported formats (at least `vhd,vmdk,vdi`) to mount loops and support dynamically sized virtual disk files. 
 
-## Comple and install `vdfuse`
+## Compile and install `vdfuse`
 
 ## Install software dependencies
 ```bash
