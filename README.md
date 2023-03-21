@@ -1,5 +1,5 @@
 # VHD-Boot
-This project is mainly talk able how to use UEFI or BIOS firmware to boot linux operating system from writable and readable VHD(Virtual Hard Device) files. The porject will use from mainly the fallowing items:
+This project is mainly talk about how to use UEFI or BIOS firmware to boot linux operating system from writable and readable VHD(Virtual Hard Device) files. The porject will use from mainly the fallowing items:
 1. kloop method
 2. vloop method
 3. vdfuseloop method
