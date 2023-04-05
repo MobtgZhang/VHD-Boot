@@ -33,7 +33,7 @@ sudo make install
 Here comes two of the methods to generate kernels:
 
 ## `dracut` solutions
-1. Download or clone the project from github: [dracut-vdfuseloop](https://github.com/NyaMisty/dracut-vdfuseloop).
+1. Download or clone the project from github: [dracut-vdfuseloop](https://github.com/MobtgZhang/VHD-Boot/tree/master/vdfuseloop).
 ```bash
 git clone https://github.com/NyaMisty/dracut-vdfuseloop
 ```
